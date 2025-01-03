@@ -12,8 +12,8 @@ class BookUseCase:
     def find_all(self) -> list[Book]:
         return self.repository.find_all()
 
-    def save(self, book: Book) -> None:
-        self.repository.save(book)
+    def save(self, id: str, title: str, is_borrowed: bool) -> None:
+        self.repository.save(Book(id=id, title=title, is_borrowed=is_borrowed))
 
     def delete(self, id: str) -> None:
         self.repository.delete(id)
@@ -22,7 +22,7 @@ class BookUseCase:
         book = self.repository.find_by_id(id)
         if not book:
             raise Exception("Book not found")
-        book.borrow()
+        book.checkout()
         self.repository.save(book)
         return book
 
@@ -30,6 +30,6 @@ class BookUseCase:
         book = self.repository.find_by_id(id)
         if not book:
             raise Exception("Book not found")
-        book.return_book()
+        book.checkin()
         self.repository.save(book)
         return book

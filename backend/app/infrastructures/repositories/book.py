@@ -27,11 +27,9 @@ class BookRepository(IBookRepository):
             self.session = SessionLocal()
         existing = self.session.query(BookModel).filter(BookModel.id == book.id).first()
         if existing:
-            # UPDATE
             existing.title = book.title
             existing.is_borrowed = book.is_borrowed
         else:
-            # INSERT (新規追加)
             new_record = BookModel(
                 id=book.id,
                 title=book.title,

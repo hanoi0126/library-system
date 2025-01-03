@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 
-from app.domain.entities.book import Book
 from app.infrastructures.repositories.book import BookRepository
 from app.presentation.schemas.book import (
     BookCreateRequest,
@@ -34,11 +33,9 @@ def get_book(book_id: str):
 def create_book(req: BookCreateRequest):
     try:
         book_usecase.save(
-            Book(
-                id=req.id,
-                title=req.title,
-                is_borrowed=False,
-            )
+            id=req.id,
+            title=req.title,
+            is_borrowed=False,
         )
         return BookResponse(id=req.id, title=req.title, is_borrowed=False)
 

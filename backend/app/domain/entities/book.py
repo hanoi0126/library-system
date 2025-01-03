@@ -6,12 +6,12 @@ class Book(BaseModel):
     title: str
     is_borrowed: bool
 
-    def borrow(self):
+    def checkout(self):
         if self.is_borrowed:
-            raise Exception("Book is already borrowed")
+            raise Exception(f"Book is already borrowed (id={self.id})")
         self.is_borrowed = True
 
-    def return_book(self):
+    def checkin(self):
         if not self.is_borrowed:
-            raise Exception("Book is not borrowed")
+            raise Exception(f"Book is not borrowed (id={self.id})")
         self.is_borrowed = False

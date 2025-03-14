@@ -43,7 +43,9 @@ class UserUseCase:
         self.user_repository.save(user)
         return user
 
-    def update_user(self, user_id: str, name: str | None = None, password: str | None = None) -> User | None:
+    def update_user(
+        self, user_id: str, name: str | None = None, password: str | None = None, is_admin: bool | None = None
+    ) -> User | None:
         # Get the user
         user = self.user_repository.find_by_id(UserId(value=user_id))
         if not user:
@@ -54,6 +56,8 @@ class UserUseCase:
             user.name = Name(value=name)
         if password:
             user.password = Password(value=password)  # In a real app, we would hash the password
+        if is_admin is not None:
+            user.is_admin = is_admin
 
         # Save the user
         self.user_repository.save(user)

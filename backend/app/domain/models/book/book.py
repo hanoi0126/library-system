@@ -22,10 +22,6 @@ class Author(BaseModel):
     value: StrictStr
 
 
-class ISBN(BaseModel):
-    value: StrictStr
-
-
 class Description(BaseModel):
     value: StrictStr
 
@@ -46,7 +42,6 @@ class Book(BaseModel):
     id: Id
     title: Title
     author: Author
-    isbn: ISBN
     description: Description | None = None
     category: list[Category]
     status: BookStatus = BookStatus.AVAILABLE

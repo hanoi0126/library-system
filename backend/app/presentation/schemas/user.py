@@ -8,6 +8,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    is_admin: bool = False
 
 
 class UserLogin(BaseModel):
@@ -18,6 +19,7 @@ class UserLogin(BaseModel):
 class UserUpdate(BaseModel):
     name: str | None = None
     password: str | None = None
+    is_admin: bool | None = None
 
 
 class UserResponse(UserBase):

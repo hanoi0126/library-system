@@ -15,6 +15,7 @@ from app.presentation.schemas.user import (
     TokenResponse,
     UserBooksResponse,
     UserCreate,
+    UserListResponse,
     UserResponse,
     UserUpdate,
 )
@@ -34,6 +35,7 @@ async def register_user(
             name=user_data.name,
             email=user_data.email,
             password=user_data.password,
+            is_admin=user_data.is_admin,
         )
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST) from e
@@ -109,6 +111,7 @@ async def update_user(
         user_id=user_id,
         name=user_data.name,
         password=user_data.password,
+        is_admin=user_data.is_admin,
     )
 
     if not user:
@@ -133,6 +136,27 @@ async def delete_user(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content={})
+
+
+@router.get("/api/users")
+async def get_all_users(
+    user_usecase: Annotated[UserUseCase, Depends(get_user_usecase)],
+    _: Annotated[dict[str, Any], Depends(get_current_user_admin)],  # Only admin can get all users
+) -> UserListResponse:
+    users = user_usecase.get_all_users()
+
+    return UserListResponse(
+        items=[
+            UserResponse(
+                id=user.id.value,
+                name=user.name.value,
+                email=user.email.value,
+                is_admin=user.is_admin,
+            )
+            for user in users
+        ],
+        total=len(users),
+    )
 
 
 @router.get("/api/users/{user_id}/books")

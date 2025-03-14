@@ -1,7 +1,7 @@
+#!/usr/bin/env python
 from sqlalchemy.orm import Session
 
 from app.domain.models.book import (
-    ISBN,
     Author,
     Book,
     BookStatus,
@@ -41,7 +41,6 @@ class BookRepository(IBookRepository):
         if existing:
             existing.title = book.title.value
             existing.author = book.author.value
-            existing.isbn = book.isbn.value
             existing.description = book.description.value if book.description else ""
             existing.category = book.category[0].value if book.category else Category.OTHER.value
             existing.status = book.status.value
@@ -51,7 +50,6 @@ class BookRepository(IBookRepository):
                 id=book.id.value,
                 title=book.title.value,
                 author=book.author.value,
-                isbn=book.isbn.value,
                 description=book.description.value if book.description else "",
                 category=book.category[0].value if book.category else Category.OTHER.value,
                 status=book.status.value,
@@ -70,7 +68,6 @@ class BookRepository(IBookRepository):
             id=BookId(value=record.id),
             title=Title(value=record.title),
             author=Author(value=record.author),
-            isbn=ISBN(value=record.isbn),
             description=Description(value=record.description) if record.description else None,
             category=[Category(record.category)],
             status=BookStatus(record.status),

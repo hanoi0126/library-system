@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from sqlalchemy import Boolean, Column, ForeignKey, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -25,7 +26,6 @@ class BookModel(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True)
     title: Mapped[str] = mapped_column(String)
     author: Mapped[str] = mapped_column(String)
-    isbn: Mapped[str] = mapped_column(String, unique=True)
     description: Mapped[str] = mapped_column(Text, nullable=True)
     category: Mapped[str] = mapped_column(String)
     status: Mapped[str] = mapped_column(String, default="available")  # available, borrowed

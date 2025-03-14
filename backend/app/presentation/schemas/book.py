@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field
 class BookBase(BaseModel):
     title: str
     author: str
-    isbn: str
     description: str | None = None
     category: str
 
@@ -16,7 +15,6 @@ class BookCreate(BookBase):
 class BookUpdate(BaseModel):
     title: str | None = None
     author: str | None = None
-    isbn: str | None = None
     description: str | None = None
     category: str | None = None
 

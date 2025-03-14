@@ -1,5 +1,4 @@
 from app.domain.models.book import (
-    ISBN,
     Author,
     Book,
     BookStatus,
@@ -36,7 +35,6 @@ class BookUseCase:
         self,
         title: str,
         author: str,
-        isbn: str,
         description: str | None,
         category: str,
     ) -> Book:
@@ -45,7 +43,6 @@ class BookUseCase:
             id=BookId.generate(),
             title=Title(value=title),
             author=Author(value=author),
-            isbn=ISBN(value=isbn),
             description=Description(value=description) if description else None,
             category=[self._parse_category(category)],
             status=BookStatus.AVAILABLE,
@@ -60,7 +57,6 @@ class BookUseCase:
         book_id: str,
         title: str | None = None,
         author: str | None = None,
-        isbn: str | None = None,
         description: str | None = None,
         category: str | None = None,
     ) -> Book | None:
@@ -74,8 +70,6 @@ class BookUseCase:
             book.title = Title(value=title)
         if author:
             book.author = Author(value=author)
-        if isbn:
-            book.isbn = ISBN(value=isbn)
         if description is not None:  # Allow empty string to clear description
             book.description = Description(value=description) if description else None
         if category:

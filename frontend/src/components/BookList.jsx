@@ -36,7 +36,8 @@ function BookList({
   onBorrowBook,
   onReturnBook,
   onDeleteBook,
-  onSearchBooks
+  onSearchBooks,
+  isAdmin = false
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -189,17 +190,32 @@ function BookList({
                     {book.title}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
-                    ID: {book.id}
+                    Author: {book.author}
                   </Typography>
+                  {book.category && (
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Category: {book.category}
+                    </Typography>
+                  )}
+                  {book.description && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      {book.description}
+                    </Typography>
+                  )}
                   <Chip
-                    label={book.is_borrowed ? 'Borrowed' : 'Available'}
-                    color={book.is_borrowed ? 'error' : 'success'}
+                    label={book.status === 'BORROWED' ? 'Borrowed' : 'Available'}
+                    color={book.status === 'BORROWED' ? 'error' : 'success'}
                     size="small"
                     sx={{ mt: 1 }}
                   />
+                  {book.borrowed_by_id && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      Borrowed by: {book.borrowed_by_id}
+                    </Typography>
+                  )}
                 </CardContent>
                 <CardActions>
-                  {book.is_borrowed ? (
+                  {book.status === 'BORROWED' ? (
                     <Button
                       size="small"
                       startIcon={<ReturnIcon />}
@@ -218,15 +234,17 @@ function BookList({
                       Borrow
                     </Button>
                   )}
-                  <Button
-                    size="small"
-                    startIcon={<DeleteIcon />}
-                    onClick={() => openDeleteDialog(book)}
-                    color="error"
-                    sx={{ ml: 'auto' }}
-                  >
-                    Delete
-                  </Button>
+                  {isAdmin && (
+                    <Button
+                      size="small"
+                      startIcon={<DeleteIcon />}
+                      onClick={() => openDeleteDialog(book)}
+                      color="error"
+                      sx={{ ml: 'auto' }}
+                    >
+                      Delete
+                    </Button>
+                  )}
                 </CardActions>
               </Card>
             </Grid>

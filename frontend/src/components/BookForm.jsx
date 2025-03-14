@@ -12,8 +12,10 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 
 function BookForm({ onAddBook }) {
-  const [bookId, setBookId] = useState('');
   const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -23,23 +25,27 @@ function BookForm({ onAddBook }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!bookId.trim() || !title.trim()) {
+    if (!title.trim() || !author.trim() || !category.trim()) {
       setSnackbar({
         open: true,
-        message: 'Please fill in all fields',
+        message: 'Please fill in all required fields',
         severity: 'error'
       });
       return;
     }
     
     const result = await onAddBook({
-      id: bookId.trim(),
-      title: title.trim()
+      title: title.trim(),
+      author: author.trim(),
+      description: description.trim() || null,
+      category: category.trim()
     });
     
     if (result.success) {
-      setBookId('');
       setTitle('');
+      setAuthor('');
+      setDescription('');
+      setCategory('');
       setSnackbar({
         open: true,
         message: 'Book added successfully!',
@@ -69,10 +75,10 @@ function BookForm({ onAddBook }) {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Book ID"
+              label="Title"
               variant="outlined"
-              value={bookId}
-              onChange={(e) => setBookId(e.target.value)}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               margin="normal"
               required
             />
@@ -80,12 +86,35 @@ function BookForm({ onAddBook }) {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Title"
+              label="Author"
               variant="outlined"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
               margin="normal"
               required
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Category"
+              variant="outlined"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              margin="normal"
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Description"
+              variant="outlined"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              margin="normal"
+              multiline
+              rows={3}
             />
           </Grid>
         </Grid>

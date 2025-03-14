@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
-from app.domain.entities.book import Book
+from app.domain.models.book import Book, Id
 
 
 class IBookRepository(ABC):
     @abstractmethod
-    def find_by_id(self, id: str) -> Book | None:
+    def find_by_id(self, book_id: Id) -> Book | None:
         pass
 
     @abstractmethod
@@ -17,5 +17,5 @@ class IBookRepository(ABC):
         pass
 
     @abstractmethod
-    def delete(self, id: str) -> None:
+    def delete(self, book_id: Id) -> None:
         pass

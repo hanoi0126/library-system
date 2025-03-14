@@ -1,26 +1,45 @@
-from pydantic import BaseModel
-
-from app.domain.entities.book import Book
+from pydantic import BaseModel, Field
 
 
-class BookCreateRequest(BaseModel):
-    id: str
+class BookBase(BaseModel):
     title: str
+    author: str
+    isbn: str
+    description: str | None = None
+    category: str
 
 
-class BookDeleteRequest(BaseModel):
+class BookCreate(BookBase):
+    pass
+
+
+class BookUpdate(BaseModel):
+    title: str | None = None
+    author: str | None = None
+    isbn: str | None = None
+    description: str | None = None
+    category: str | None = None
+
+
+class BookResponse(BookBase):
     id: str
+    status: str
+    borrowed_by_id: str | None = None
+
+    class Config:
+        from_attributes = True
 
 
-class BookResponse(BaseModel):
-    id: str
-    title: str
-    is_borrowed: bool
+class BookListResponse(BaseModel):
+    items: list[BookResponse]
+    total: int
+    page: int
+    limit: int
 
-    @classmethod
-    def from_domain(cls, book: Book):
-        return cls(
-            id=book.id,
-            title=book.title,
-            is_borrowed=book.is_borrowed,
-        )
+
+class BookBorrowRequest(BaseModel):
+    user_id: str = Field(..., description="ID of the user borrowing the book")
+
+
+class BookReturnRequest(BaseModel):
+    user_id: str = Field(..., description="ID of the user returning the book")

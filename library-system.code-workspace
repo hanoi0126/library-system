@@ -1,63 +1,54 @@
 {
-    "folders": [
-      {
-        "name": "library-system",
-        "path": "."
-      },
-      {
-        "path": "backend"
-      },
-      {
-        "path": "frontend"
-      },
-    ],
-    "settings": {
-      "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
-        "source.fixAll.stylelint": "explicit"
-      },
-      "editor.formatOnSave": true,
-      "editor.formatOnPaste": true,
-      "editor.formatOnType": true,
-      "json.format.keepLines": true,
-      "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-      },
-      "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-      },
-      "[typescriptreact]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-      },
-      "[css]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-      },
-      "[json]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-      },
-      "search.exclude": {
-        "**/node_modules": true,
-        "static": true
-      },
-      "search.useParentIgnoreFiles": true,
-      "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.codeActionsOnSave": {
-          "source.organizeImports": "explicit"
-        }
-      },
-      "ruff.enable": true,
-      "mypy-type-checker.args": ["--config-file=pyproject.toml"],
-      "cSpell.words": ["sqlalchemy", "werkzeug"]
+  "folders": [
+    {
+      "name": "library-system",
+      "path": "."
     },
-    "extensions": {
-      "recommendations": [
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint",
-        "charliermarsh.ruff",
-        "ms-python.mypy-type-checker",
-        "ms-azuretools.azure-dev",
-        "ms-azuretools.vscode-azurefunctions"
-      ]
+    {
+      "path": "backend"
+    },
+    {
+      "path": "frontend"
     }
+  ],
+  "settings": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.fixAll.stylelint": "explicit"
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "json.format.keepLines": true,
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[css]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "static": true
+    },
+    "search.useParentIgnoreFiles": true,
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff",
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+      }
+    },
+    "ruff.enable": true,
+    "mypy-type-checker.args": ["--config-file=pyproject.toml"],
+    "liveServer.settings.multiRootWorkspaceName": "library-system",
+    "git.ignoreLimitWarning": true
   }
+}

@@ -69,10 +69,16 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> dict[str,
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        # Print token for debugging
+        print(f"Decoding token: {token[:10]}...")
+
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: str = payload.get("sub")
         email: str = payload.get("email")
         is_admin: bool = payload.get("is_admin", False)
+
+        print(f"Decoded payload: user_id={user_id}, email={email}, is_admin={is_admin}")
+
         if user_id is None or email is None:
             raise credentials_exception
     except JWTError as e:
@@ -82,9 +88,12 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> dict[str,
 
 
 def get_current_user_admin(current_user: Annotated[dict[str, Any], Depends(get_current_user)]) -> dict[str, Any]:
+    print(f"Checking admin permissions for user: {current_user['email']}, is_admin={current_user['is_admin']}")
     if not current_user["is_admin"]:
+        print(f"User {current_user['email']} is not an admin")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions",
         )
+    print(f"User {current_user['email']} is an admin, granting access")
     return current_user

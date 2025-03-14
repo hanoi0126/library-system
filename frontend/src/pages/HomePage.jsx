@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, AppBar, Toolbar, Button, IconButton, Tooltip } from '@mui/material';
-import BookForm from '../components/BookForm';
 import BookList from '../components/BookList';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -41,31 +40,6 @@ function HomePage() {
       setError('Failed to load books. Please try again later.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Add a new book
-  const handleAddBook = async (bookData) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/books`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(bookData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to add book');
-      }
-
-      fetchBooks();
-      return { success: true };
-    } catch (error) {
-      console.error('Error adding book:', error);
-      return { success: false, message: error.message };
     }
   };
 
@@ -120,7 +94,7 @@ function HomePage() {
     }
   };
 
-  // Delete a book
+  // Delete a book (only for admin users)
   const handleDeleteBook = async (bookId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/books/${bookId}`, {
@@ -224,12 +198,6 @@ function HomePage() {
       </AppBar>
       
       <Container maxWidth="lg">
-        {user?.is_admin && (
-          <Box sx={{ mb: 4 }}>
-            <BookForm onAddBook={handleAddBook} />
-          </Box>
-        )}
-        
         <Box>
           <BookList 
             books={filteredBooks}

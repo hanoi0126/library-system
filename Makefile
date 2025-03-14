@@ -15,7 +15,7 @@ down:
 # Start backend
 backend:
 	@echo "Starting backend..."
-	@cd backend && uvicorn app.app:app --reload --host 0.0.0.0 --port 8000
+	@cd backend && make run
 
 # Start frontend
 frontend:

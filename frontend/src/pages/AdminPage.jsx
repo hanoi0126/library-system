@@ -32,6 +32,7 @@ import { useAuth } from '../context/AuthContext';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 import BookForm from '../components/BookForm';
 
 // API Base URL
@@ -59,7 +60,7 @@ function TabPanel(props) {
 }
 
 function AdminPage() {
-  const { user, token, logout } = useAuth();
+  const { user, token, logout, register } = useAuth();
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const [books, setBooks] = useState([]);
@@ -67,9 +68,14 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editUserDialog, setEditUserDialog] = useState(false);
+  const [addUserDialog, setAddUserDialog] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [editUserName, setEditUserName] = useState('');
   const [editUserIsAdmin, setEditUserIsAdmin] = useState(false);
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserPassword, setNewUserPassword] = useState('');
+  const [newUserIsAdmin, setNewUserIsAdmin] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -115,7 +121,7 @@ function AdminPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      // This endpoint would need to be implemented in the backend
+      console.log('Fetching users with token:', token);
       const response = await fetch(`${API_BASE_URL}/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -123,15 +129,18 @@ function AdminPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Server response:', response.status, errorData);
+        throw new Error(`Failed to fetch users: ${response.status} ${errorData.detail || ''}`);
       }
 
       const data = await response.json();
+      console.log('Users data:', data);
       setUsers(data.items);
       setError(null);
     } catch (error) {
       console.error('Error fetching users:', error);
-      setError('Failed to load users. Please try again later.');
+      setError(`Failed to load users: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -255,6 +264,53 @@ function AdminPage() {
     setCurrentUser(null);
   };
 
+  // Open add user dialog
+  const handleAddUserOpen = () => {
+    setNewUserName('');
+    setNewUserEmail('');
+    setNewUserPassword('');
+    setNewUserIsAdmin(false);
+    setAddUserDialog(true);
+  };
+
+  // Close add user dialog
+  const handleAddUserClose = () => {
+    setAddUserDialog(false);
+  };
+
+  // Add new user
+  const handleAddUser = async () => {
+    try {
+      const userData = {
+        name: newUserName,
+        email: newUserEmail,
+        password: newUserPassword,
+        is_admin: newUserIsAdmin
+      };
+      
+      const result = await register(userData);
+      
+      if (result.success) {
+        fetchUsers();
+        setSnackbar({
+          open: true,
+          message: 'User added successfully',
+          severity: 'success'
+        });
+        handleAddUserClose();
+      } else {
+        throw new Error(result.message || 'Failed to add user');
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
+      setSnackbar({
+        open: true,
+        message: error.message || 'Failed to add user',
+        severity: 'error'
+      });
+    }
+  };
+
   // Save user changes
   const handleSaveUser = async () => {
     try {
@@ -348,16 +404,21 @@ function AdminPage() {
       
       <Container maxWidth="lg">
         <Paper sx={{ width: '100%', mb: 4 }}>
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            centered
-          >
-            <Tab label="Book Management" />
-            <Tab label="User Management" />
-          </Tabs>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', p: 2, display: 'flex', justifyContent: 'center' }}>
+            <Button 
+              variant={tabValue === 0 ? "contained" : "outlined"} 
+              onClick={() => setTabValue(0)}
+              sx={{ mr: 2 }}
+            >
+              Book Management
+            </Button>
+            <Button 
+              variant={tabValue === 1 ? "contained" : "outlined"} 
+              onClick={() => setTabValue(1)}
+            >
+              User Management
+            </Button>
+          </Box>
           
           {/* Book Management Tab */}
           <TabPanel value={tabValue} index={0}>
@@ -419,9 +480,19 @@ function AdminPage() {
           
           {/* User Management Tab */}
           <TabPanel value={tabValue} index={1}>
-            <Typography variant="h5" gutterBottom>
-              User List
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Typography variant="h5">
+                User List
+              </Typography>
+              <Button 
+                variant="contained" 
+                color="primary" 
+                startIcon={<AddIcon />}
+                onClick={handleAddUserOpen}
+              >
+                Add User
+              </Button>
+            </Box>
             {loading ? (
               <Typography>Loading users...</Typography>
             ) : error ? (
@@ -506,6 +577,68 @@ function AdminPage() {
             <Button onClick={handleEditUserClose}>Cancel</Button>
             <Button onClick={handleSaveUser} variant="contained" color="primary">
               Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+        
+        {/* Add User Dialog */}
+        <Dialog open={addUserDialog} onClose={handleAddUserClose}>
+          <DialogTitle>Add New User</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Enter the details for the new user
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Name"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={newUserName}
+              onChange={(e) => setNewUserName(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Email"
+              type="email"
+              fullWidth
+              variant="outlined"
+              value={newUserEmail}
+              onChange={(e) => setNewUserEmail(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Password"
+              type="password"
+              fullWidth
+              variant="outlined"
+              value={newUserPassword}
+              onChange={(e) => setNewUserPassword(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={newUserIsAdmin}
+                  onChange={(e) => setNewUserIsAdmin(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="Admin User"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleAddUserClose}>Cancel</Button>
+            <Button 
+              onClick={handleAddUser} 
+              variant="contained" 
+              color="primary"
+              disabled={!newUserName || !newUserEmail || !newUserPassword}
+            >
+              Add User
             </Button>
           </DialogActions>
         </Dialog>

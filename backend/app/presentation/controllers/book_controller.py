@@ -31,7 +31,7 @@ async def get_books(
                 title=book.title.value,
                 author=book.author.value,
                 description=book.description.value if book.description else None,
-                category=book.category[0].value if book.category else "",
+                category=", ".join([cat.value for cat in book.category]) if book.category else "",
                 status=book.status.value,
                 borrowed_by_id=book.borrowed_by.value if book.borrowed_by else None,
             )
@@ -57,7 +57,7 @@ async def get_book(
         title=book.title.value,
         author=book.author.value,
         description=book.description.value if book.description else None,
-        category=book.category[0].value if book.category else "",
+        category=", ".join([cat.value for cat in book.category]) if book.category else "",
         status=book.status.value,
         borrowed_by_id=book.borrowed_by.value if book.borrowed_by else None,
     )
@@ -81,7 +81,7 @@ async def create_book(
         title=book.title.value,
         author=book.author.value,
         description=book.description.value if book.description else None,
-        category=book.category[0].value if book.category else "",
+        category=", ".join([cat.value for cat in book.category]) if book.category else "",
         status=book.status.value,
         borrowed_by_id=book.borrowed_by.value if book.borrowed_by else None,
     )
@@ -110,7 +110,7 @@ async def update_book(
         title=book.title.value,
         author=book.author.value,
         description=book.description.value if book.description else None,
-        category=book.category[0].value if book.category else "",
+        category=", ".join([cat.value for cat in book.category]) if book.category else "",
         status=book.status.value,
         borrowed_by_id=book.borrowed_by.value if book.borrowed_by else None,
     )
@@ -155,7 +155,7 @@ async def borrow_book(
         title=book.title.value,
         author=book.author.value,
         description=book.description.value if book.description else None,
-        category=book.category[0].value if book.category else "",
+        category=", ".join([cat.value for cat in book.category]) if book.category else "",
         status=book.status.value,
         borrowed_by_id=book.borrowed_by.value if book.borrowed_by else None,
     )
@@ -191,7 +191,7 @@ async def return_book(
         title=book.title.value,
         author=book.author.value,
         description=book.description.value if book.description else None,
-        category=book.category[0].value if book.category else "",
+        category=", ".join([cat.value for cat in book.category]) if book.category else "",
         status=book.status.value,
         borrowed_by_id=book.borrowed_by.value if book.borrowed_by else None,
     )

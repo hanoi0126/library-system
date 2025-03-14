@@ -44,7 +44,7 @@ class BookUseCase:
             title=Title(value=title),
             author=Author(value=author),
             description=Description(value=description) if description else None,
-            category=[self._parse_category(category)],
+            category=self._parse_categories(category),
             status=BookStatus.AVAILABLE,
         )
 
@@ -73,7 +73,7 @@ class BookUseCase:
         if description is not None:  # Allow empty string to clear description
             book.description = Description(value=description) if description else None
         if category:
-            book.category = [self._parse_category(category)]
+            book.category = self._parse_categories(category)
 
         # Save the book
         self.book_repository.save(book)
@@ -123,8 +123,20 @@ class BookUseCase:
         self.book_repository.save(book)
         return book
 
-    def _parse_category(self, category: str) -> Category:
-        try:
-            return Category(category)
-        except ValueError:
-            return Category.OTHER
+    def _parse_categories(self, category_str: str) -> list[Category]:
+        """Parse a comma-separated string of categories into a list of Category enums."""
+        categories = []
+        for cat in category_str.split(","):
+            category = cat.strip()
+            if not category:
+                continue
+            try:
+                categories.append(Category(category))
+            except ValueError:
+                categories.append(Category.OTHER)
+
+        # If no valid categories were found, default to OTHER
+        if not categories:
+            categories.append(Category.OTHER)
+
+        return categories

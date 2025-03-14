@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }) => {
       formData.append('username', credentials.email);
       formData.append('password', credentials.password);
       
+      console.log('Logging in with:', credentials.email);
       const response = await fetch(`${API_BASE_URL}/users/login`, {
         method: 'POST',
         headers: {
@@ -58,6 +59,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = await response.json();
+      console.log('Login successful, token received');
       
       // Save token to localStorage
       localStorage.setItem('token', data.access_token);
@@ -65,6 +67,7 @@ export const AuthProvider = ({ children }) => {
       
       // Get user info
       const userInfo = await getUserInfo(data.access_token);
+      console.log('User info retrieved:', userInfo);
       setUser(userInfo);
       localStorage.setItem('user', JSON.stringify(userInfo));
       
@@ -113,12 +116,17 @@ export const AuthProvider = ({ children }) => {
   // Get user info
   const getUserInfo = async (authToken) => {
     try {
-      // In a real app, you would make an API call to get user info
-      // For now, we'll decode the token to get the user ID
-      // This is a simplified example - in a real app, you would make a proper API call
+      // Decode the JWT token to get the user ID
+      // JWT tokens are in the format: header.payload.signature
+      // We need to extract the payload and decode it
+      const tokenParts = authToken.split('.');
+      if (tokenParts.length !== 3) {
+        throw new Error('Invalid token format');
+      }
       
-      // Placeholder implementation - in a real app, you would decode the JWT or make an API call
-      const userId = "user123"; // Replace with actual user ID from token
+      // Decode the payload (second part of the token)
+      const payload = JSON.parse(atob(tokenParts[1]));
+      const userId = payload.sub; // 'sub' is the standard claim for the subject (user ID)
       
       const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
         headers: {

@@ -44,7 +44,7 @@ class BookRepository(IBookRepository):
             existing.description = book.description.value if book.description else ""
             existing.category = book.category[0].value if book.category else Category.OTHER.value
             existing.status = book.status.value
-            existing.borrowed_by_id = book.borrowed_by.value if book.borrowed_by else None
+            existing.borrowed_by_id = str(book.borrowed_by.value) if book.borrowed_by else None  # type: ignore[assignment]
         else:
             new_record = BookModel(
                 id=book.id.value,

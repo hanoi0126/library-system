@@ -7,15 +7,29 @@ import {
   Button, 
   Grid,
   Snackbar,
-  Alert
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+  OutlinedInput
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+
+// Book categories from backend enum
+const BOOK_CATEGORIES = [
+  "Deep Learning",
+  "Machine Learning",
+  "Python",
+  "Other"
+];
 
 function BookForm({ onAddBook }) {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState([]);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -25,7 +39,7 @@ function BookForm({ onAddBook }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!title.trim() || !author.trim() || !category.trim()) {
+    if (!title.trim() || !author.trim() || categories.length === 0) {
       setSnackbar({
         open: true,
         message: 'Please fill in all required fields',
@@ -38,14 +52,14 @@ function BookForm({ onAddBook }) {
       title: title.trim(),
       author: author.trim(),
       description: description.trim() || null,
-      category: category.trim()
+      category: categories.join(', ')
     });
     
     if (result.success) {
       setTitle('');
       setAuthor('');
       setDescription('');
-      setCategory('');
+      setCategories([]);
       setSnackbar({
         open: true,
         message: 'Book added successfully!',
@@ -95,15 +109,29 @@ function BookForm({ onAddBook }) {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Category"
-              variant="outlined"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              margin="normal"
-              required
-            />
+            <FormControl fullWidth margin="normal" required>
+              <InputLabel id="category-label">Categories</InputLabel>
+              <Select
+                labelId="category-label"
+                multiple
+                value={categories}
+                onChange={(e) => setCategories(e.target.value)}
+                input={<OutlinedInput id="select-multiple-chip" label="Categories" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+              >
+                {BOOK_CATEGORIES.map((category) => (
+                  <MenuItem key={category} value={category}>
+                    {category}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12}>
             <TextField
